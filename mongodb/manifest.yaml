@@ -1,0 +1,98 @@
+apiVersion: v1  #headless service
+kind: Service
+metadata:
+  name: mongo-headless-service
+  namespace: roboshop
+spec:
+  # This makes the service "headless"
+  clusterIP: None
+  selector:
+    project: roboshop
+    tier: db
+    component: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  namespace: roboshop
+  labels:
+    project: roboshop
+    tier: db
+    component: mongodb
+spec:
+  selector:
+    matchLabels:
+      project: roboshop
+      tier: db
+      component: mongodb # has to match .spec.template.metadata.labels
+  serviceName: "mongo-headless-service"
+  replicas: 1 # by default is 1
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+      labels:
+        project: roboshop
+        tier: db
+        component: mongodb # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mongodb
+        image: saithota9/mongodb:1.0.0
+        imagePullPolicy: Always
+        # resources:
+        #   requests:
+        #     cpu: "60m"
+        #     memory: "256Mi"
+        #   limits:
+        #     cpu: "150m"
+        #     memory: "500Mi"
+        readinessProbe:
+          tcpSocket:
+            port: 27017
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 3
+        livenessProbe:
+          tcpSocket:
+            port: 27017
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          failureThreshold: 3
+        volumeMounts:
+        - name: mongodb-volume
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb-volume
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: my-ebs-sc
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: roboshop
+  labels:
+    project: roboshop
+    tier: db
+    component: mongodb 
+spec:
+  selector:
+    project: roboshop
+    tier: db
+    component: mongodb 
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
