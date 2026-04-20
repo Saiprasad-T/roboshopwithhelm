@@ -64,6 +64,15 @@ spec:
           initialDelaySeconds: 90
           periodSeconds: 10
           failureThreshold: 3
+        affinity:
+         nodeAffinity:
+           requiredDuringSchedulingIgnoredDuringExecution:
+             nodeSelectorTerms:
+               - matchExpressions:
+                   - key: tier
+                     operator: In
+                     values:
+                       - database
         volumeMounts:
         - name: redis-volume
           mountPath: /data
