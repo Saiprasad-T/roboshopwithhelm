@@ -70,8 +70,8 @@ spec:
             nodeSelectorTerms:
               - matchExpressions:
                   - key: tier
-                   operator: In
-                   values:
+                    operator: In
+                    values:
                       - database
         volumeMounts:
         - name: redis-volume
