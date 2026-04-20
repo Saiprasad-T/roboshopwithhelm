@@ -78,18 +78,18 @@ spec:
          envFrom:
            - configMapRef:
               name: mysql
-      affinity:
-         nodeAffinity:
-           requiredDuringSchedulingIgnoredDuringExecution:
-             nodeSelectorTerms:
-               - matchExpressions:
-                   - key: tier
-                     operator: In
-                     values:
-                       - database2
          volumeMounts:
           - name: mysql-volume
             mountPath: /var/lib/mysql
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: tier
+                    operator: In
+                    values:
+                      - database2
   volumeClaimTemplates:
   - metadata:
       name: mysql-volume
