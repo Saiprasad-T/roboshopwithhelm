@@ -61,16 +61,18 @@ spec:
           limits:
             cpu: "75m"
             memory: "256Mi"
-        # readinessProbe:
-        #   tcpSocket:
-        #     port: 5672
-        #   initialDelaySeconds: 30
-        #   periodSeconds: 10
-        # livenessProbe:
-        #   tcpSocket:
-        #     port: 5672
-        #   initialDelaySeconds: 30
-        #   periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 3
+        livenessProbe:
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 3
         envFrom:
          - configMapRef:
              name: rabbitmq
