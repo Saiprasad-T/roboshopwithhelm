@@ -60,21 +60,21 @@ spec:
            limits:
              cpu: "300m"
              memory: "800Mi"
-        #  startupProbe:
-        #    tcpSocket:
-        #      port: 3306
-        #    failureThreshold: 60
-        #    periodSeconds: 5
-        #  readinessProbe:
-        #    tcpSocket:
-        #      port: 3306
-        #    initialDelaySeconds: 120
-        #    periodSeconds: 5
-        #  livenessProbe:
-        #    tcpSocket:
-        #      port: 3306
-        #    initialDelaySeconds: 120
-        #    periodSeconds: 10
+         startupProbe:
+           tcpSocket:
+             port: 3306
+           failureThreshold: 30
+           periodSeconds: 5
+         readinessProbe:
+           tcpSocket:
+             port: 3306
+           initialDelaySeconds: 30
+           periodSeconds: 10
+         livenessProbe:
+           tcpSocket:
+             port: 3306
+           initialDelaySeconds: 60
+           periodSeconds: 10
          envFrom:
            - configMapRef:
               name: mysql
