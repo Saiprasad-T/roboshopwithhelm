@@ -24,7 +24,7 @@ metadata:
     project: roboshop
     tier: db
     component: mongodb
-spec:
+spec: #statefulset
   selector:
     matchLabels:
       project: roboshop
@@ -67,6 +67,15 @@ spec:
         volumeMounts:
         - name: mongodb-volume
           mountPath: /data/db
+      affinity:
+         nodeAffinity:
+           requiredDuringSchedulingIgnoredDuringExecution:
+             nodeSelectorTerms:
+               - matchExpressions:
+                   - key: tier
+                     operator: In
+                     values:
+                       - database
   volumeClaimTemplates:
   - metadata:
       name: mongodb-volume
